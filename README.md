@@ -28,3 +28,15 @@ x^n n is the degree.
 
 Weight functions
 w(x) = (1-|x|^3)^3I[|x|<1]
+
+# Handy find and replace in Textmate
+This fixed the JSON Maxim gave me
+
+,\n}
+\n}
+[x] Regular Expression
+
+# Dynamic JSON data
+Give people something to look at while a large dataset loads.
+Load data in chunks.
+http://pothibo.com/2013/09/d3-js-how-to-handle-dynamic-json-data/
