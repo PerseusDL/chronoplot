@@ -37,6 +37,7 @@ path.line {
 // Store JSON
 var raw = null;
 var ext = new ObjectExt;
+var yearOffset = 0
 
 // Get the JSON
 $.ajax({
@@ -57,7 +58,8 @@ $.ajax({
 // Filter items
 function filter( _data ) {
 //	var check = [ "اليونيني", "اليزدي" ];
-	var check = [ "البغدادي" ];
+//	var check = [ "البغدادي" ];
+	var check = [ "الدمشقي" ];
 	var match = [];
 	for ( var i=0,ii=_data.length; i<ii; i++ ) {
 		if ( $.inArray( _data[i]["nisba"], check ) != -1 ) {
@@ -92,7 +94,7 @@ function chart( _data ) {
 		.orient( "bottom" )
 		.ticks( 20 )
 	
-	var xMap = function(d){ return x( dateFn(d) ) }
+	var xMap = function(d){ return x( dateFn(d)-yearOffset ) }
 	
 	// Y variable
 	var y = d3.scale.linear()
@@ -153,15 +155,14 @@ function chart( _data ) {
 				function() {
 					var xValues = _data.map( xMap );
 					var yValues = _data.map( yMap );
-					var yValuesSmoothed = loess( xValues, yValues, 0.25 );
-					return d3.zip( xValues, yValuesSmoothed );
+					return loess( xValues, yValues, 0.25 );
 				}
 			)
 			.attr('class', 'line')
 			.attr('d', 
 				d3.svg.line()
-					.x( function(d){ return x(d[0]) } )
-					.y( function(d){ return y(d[1]) } )
+					.x( function(d){ return x(d[0])-padding } )
+					.y( function(d){ return y(d[1])+padding*3 } )
 					.interpolate('basis')
 			)
 }
@@ -245,12 +246,12 @@ function loess( xval, yval, bandwidth ) {
 		var alpha = meanY - beta * meanX;
 		var val = beta * x + alpha;
 		
+		// Figure out why this is happening.
 		if ( isNaN( val ) || val < 0 ) {
 			console.log([ 'BAD', xval[i], yval[i], val, denom ]);
 		}
 		else {
-			console.log([ xval[i], yval[i], val, denom ]);
-			res.push( val );
+			res.push([ xval[i], val ]);
 		}
 	}
 	return res;
