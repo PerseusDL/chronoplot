@@ -3,37 +3,54 @@
 <meta charset="utf-8">
 <body>
 
-<div id="selector"></div>
+<div id="selectorFilter">
+	<input type="text" placeholder="filter" />
+	<div id="selector"></div>
+	<a href="" id="clear">Clear All</a>
+</div>
 
 <!--- Javascript and CSS -->
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="third_party/jslib/src/js/ArrayExt.js"></script>
+<script src="third_party/jslib/src/js/jQueryPlus.js"></script>
 <script src="third_party/jslib/src/js/DateConvert.js"></script>
 
 <style type="text/css">
-#selector {
-	top:0;
+body { margin:0; }
+h1 {
+	margin-top:50px;
+	margin-bottom:0;
+	padding:0 0 0 20px;
+}
+#selectorFilter {
 	right:0;
+	top:0;
 	position:fixed;
-	height:100%;
 	background-color:#EEE;
-	padding: 10px;
-	overflow-y: scroll;
+	padding:10px;
+	height:100%;
+}
+#selectorFilter input {
+	margin-bottom:10px;
+}
+#selector {
+	height:75%;
+	overflow-y:scroll;
 }
 .axis path,
 .axis line {
-	fill: none;
-	stroke: black;
-	shape-rendering: crispEdges;
+	fill:none;
+	stroke:black;
+	shape-rendering:crispEdges;
 }
 .axis text {
-	font-family: sans-serif;
-	font-size: 11px;
+	font-family:sans-serif;
+	font-size:11px;
 }
 path.line {
-	fill: none;
-	stroke: #FF0000;
+	fill:none;
+	stroke:#FF0000;
 }
 </style>
 
@@ -53,7 +70,6 @@ $.ajax({
 	success: function( _data, _status ) {
 		raw = _data;
 		buildSelector( _data, "nisba" );
-		update();
 	},
 	error: function( _error ) {
 		alert( 'Error getting data file' );
@@ -62,10 +78,11 @@ $.ajax({
 });
 
 function update() {
+	mark();
 	chart( filter( raw ) );
+	$.scrollToBottom(.5);
 }
 
-// 
 function buildSelector( _data, _key ) {
 	var words = uniqWords( _data, _key );
 	for ( var i=0, ii=words.length; i<ii; i++ ) {
@@ -75,8 +92,12 @@ function buildSelector( _data, _key ) {
 	selectorClick();
 }
 
+function mark() {
+	$('body').append( "<h1>"+check.join(' ' )+"</h1>" );
+}
+
 function selectorClick() {
-	$('#selector input').change( function() {
+	$('#selector input:checkbox').change( function() {
 		var val = $(this).attr('value');
 		if ( $(this).prop('checked') ) {
 			if ( $.inArray( val, check ) == -1 ) {
@@ -88,6 +109,10 @@ function selectorClick() {
 		}
 		update();
 	});
+	$('#clear').on( 'touchstart click', function( _e ) {
+		_e.preventDefault();
+		$('#selector input:checkbox').attr("checked",false);
+	})
 }
 
 // Unique Words
@@ -156,7 +181,7 @@ function chart( _data ) {
 	
 	var yMap = function(d){ return x( freqFn(d) ) }
 	
-	// Translate	
+	// Translate
 	var translate = function(d){ return "translate("+x(freqFn(d))+","+y(freqFn(d))+")" }
 
 	// Build the axes
@@ -193,7 +218,7 @@ function chart( _data ) {
 			.attr( "cx", function(d){ return x(dateFn(d)) })
 			.attr( "cy", function(d){ return y(freqFn(d)) })
 		.append( "text" )
-//			.attr( "transform", function(d){ return translate(d) })
+			.attr( "transform", function(d){ return translate(d) })
 			.text( function(d){ return nisbaFn(d) })
 	
 	// Render the loess curve
@@ -209,8 +234,8 @@ function chart( _data ) {
 			.attr('class', 'line')
 			.attr('d', 
 				d3.svg.line()
-					.x( function(d){ return x(d[0])-padding } )
-					.y( function(d){ return y(d[1])+padding*3 } )
+					.x( function(d){ return x(d[0]) } )
+					.y( function(d){ return y(d[1]) } )
 					.interpolate('basis')
 			)
 }
