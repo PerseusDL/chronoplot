@@ -30,13 +30,18 @@ h1 {
 	background-color:#EEE;
 	padding:10px;
 	height:100%;
+	width:215px;
 }
 #selectorFilter input {
 	margin-bottom:10px;
 }
 #selector {
+	/* font-size: 18px; */
 	height:75%;
 	overflow-y:scroll;
+}
+.gray {
+	color: #AAA;
 }
 .axis path,
 .axis line {
@@ -56,16 +61,18 @@ path.line {
 
 <script>
 
-// Store JSON
+// Gobal vars
 var raw = null;
 var arrext = new ArrayExt;
-var yearOffset = 0;
+var year_offset = 0;
 var check = [];
+var filter_check = [];
 
 // Get the JSON
 $.ajax({
 //	url: 'data/TI_Onomastic_sample.json',
-	url: 'data/TI_Onomastic.json',
+//	url: 'data/TI_Onomastic.json',
+	url: 'data/TI_Onomastic_clean.json',
 	dataType: 'json',
 	success: function( _data, _status ) {
 		raw = _data;
@@ -77,19 +84,45 @@ $.ajax({
 	}
 });
 
+function filterTextbox() {
+	$('#selectorFilter input').on( 'keyup', function( _e ) {
+		$('#selector .item').hide();
+		var val = $( this ).val();
+		if ( val == '' ) {
+			$('#selector .item').show();
+		}
+		for ( var i=0; i<filter_check.length; i++ ) {
+			if ( filter_check[i].indexOf( val ) != -1 ) {
+				var split = filter_check[i].split(':');
+				$('#selector .item input[value="'+split[0]+'"]').parent().show();
+			}
+		}
+	})
+}
+
 function update() {
 	mark();
-	chart( filter( raw ) );
+	chart( filter(raw) );
 	$.scrollToBottom(.5);
 }
 
 function buildSelector( _data, _key ) {
 	var words = uniqWords( _data, _key );
-	for ( var i=0, ii=words.length; i<ii; i++ ) {
-		var item = '<input type="checkbox" value="'+words[i]+'">'+words[i]+"<br/>";
+	for ( var arab in words ) {
+		
+		// Build the selector item
+		var extra = '';
+		if ( words[arab] != null ) {
+			extra = " <span class=\"gray\">"+words[arab]+"</span>";
+		}
+		var item = '<div class="item"><input type="checkbox" value="'+arab+'">'+arab+extra+"</div>";
 		$('#selector').append( item );
+		
+		// Build the filter check
+		filter_check.push( arab+":"+words[arab] );
 	}
 	selectorClick();
+	filterTextbox();
 }
 
 function mark() {
@@ -112,23 +145,21 @@ function selectorClick() {
 	$('#clear').on( 'touchstart click', function( _e ) {
 		_e.preventDefault();
 		$('#selector input:checkbox').attr("checked",false);
+		check = [];
 	})
 }
 
 // Unique Words
 function uniqWords( _data, _key ) {
 	var filter = {};
-	var arr = [];
 	for ( var i=0, ii=_data.length; i<ii; i++ ) {
 		var key = _data[i]["nisba"];
+		var phon = _data[i]["phonetic"];
 		if ( key != null ) {
-			filter[ key ] = 1;
+			filter[ key ] = phon;
 		}
 	}
-	for ( var key in filter ) {
-		arr.push( key );
-	}
-	return arr;
+	return filter;
 }
 
 // Filter items
@@ -167,7 +198,7 @@ function chart( _data ) {
 		.orient( "bottom" )
 		.ticks( 20 )
 	
-	var xMap = function(d){ return x( dateFn(d)-yearOffset ) }
+	var xMap = function(d){ return x( dateFn(d)-year_offset ) }
 	
 	// Y variable
 	var y = d3.scale.linear()
