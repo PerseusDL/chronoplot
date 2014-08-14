@@ -2,12 +2,25 @@
 <html>
 <meta charset="utf-8">
 <body>
+
+<div id="selector"></div>
+
+<!--- Javascript and CSS -->
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="third_party/jslib/src/js/ObjectExt.js"></script>
+<script src="third_party/jslib/src/js/ArrayExt.js"></script>
 <script src="third_party/jslib/src/js/DateConvert.js"></script>
 
 <style type="text/css">
+#selector {
+	top:0;
+	right:0;
+	position:fixed;
+	height:100%;
+	background-color:#EEE;
+	padding: 10px;
+	overflow-y: scroll;
+}
 .axis path,
 .axis line {
 	fill: none;
@@ -24,20 +37,13 @@ path.line {
 }
 </style>
 
-<!--- Pulled this from inspiration/loess/loess.js -->
-<!--
-<script>
-    var science = { stats: {} };
-</script>
-<script src="inspiration/loess/loess.js" charset="utf-8"></script>
--->
-
 <script>
 
 // Store JSON
 var raw = null;
-var ext = new ObjectExt;
-var yearOffset = 0
+var arrext = new ArrayExt;
+var yearOffset = 0;
+var check = [];
 
 // Get the JSON
 $.ajax({
@@ -46,8 +52,8 @@ $.ajax({
 	dataType: 'json',
 	success: function( _data, _status ) {
 		raw = _data;
-		chart( filter( ext.clone( _data ) ) );
-//		chart( ext.clone( _data ) );
+		buildSelector( _data, "nisba" );
+		update();
 	},
 	error: function( _error ) {
 		alert( 'Error getting data file' );
@@ -55,11 +61,53 @@ $.ajax({
 	}
 });
 
+function update() {
+	chart( filter( raw ) );
+}
+
+// 
+function buildSelector( _data, _key ) {
+	var words = uniqWords( _data, _key );
+	for ( var i=0, ii=words.length; i<ii; i++ ) {
+		var item = '<input type="checkbox" value="'+words[i]+'">'+words[i]+"<br/>";
+		$('#selector').append( item );
+	}
+	selectorClick();
+}
+
+function selectorClick() {
+	$('#selector input').change( function() {
+		var val = $(this).attr('value');
+		if ( $(this).prop('checked') ) {
+			if ( $.inArray( val, check ) == -1 ) {
+				check.push( val );
+			}
+		}
+		else {
+			check = arrext.exile( check, [ val ] );
+		}
+		update();
+	});
+}
+
+// Unique Words
+function uniqWords( _data, _key ) {
+	var filter = {};
+	var arr = [];
+	for ( var i=0, ii=_data.length; i<ii; i++ ) {
+		var key = _data[i]["nisba"];
+		if ( key != null ) {
+			filter[ key ] = 1;
+		}
+	}
+	for ( var key in filter ) {
+		arr.push( key );
+	}
+	return arr;
+}
+
 // Filter items
 function filter( _data ) {
-//	var check = [ "اليونيني", "اليزدي" ];
-//	var check = [ "البغدادي" ];
-	var check = [ "الدمشقي" ];
 	var match = [];
 	for ( var i=0,ii=_data.length; i<ii; i++ ) {
 		if ( $.inArray( _data[i]["nisba"], check ) != -1 ) {
