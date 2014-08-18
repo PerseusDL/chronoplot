@@ -15,6 +15,8 @@
 <script src="third_party/jslib/src/js/ArrayExt.js"></script>
 <script src="third_party/jslib/src/js/jQueryPlus.js"></script>
 <script src="third_party/jslib/src/js/DateConvert.js"></script>
+<script src="third_party/jslib/src/js/ObjectExt.js"></script>
+<script src="third_party/jslib/src/js/Sorted.js"></script>
 
 <script>
     var science = { stats: {} };
@@ -38,12 +40,21 @@ h1 {
 	width:215px;
 }
 #selectorFilter input {
+	padding: 5px;
 	margin-bottom:10px;
 }
 #selector {
 	/* font-size: 18px; */
-	height:75%;
+	height: 500px;
 	overflow-y:scroll;
+}
+#selector div {
+	margin: 15px 0;
+}
+#clear {
+	display: block;
+	text-align:center;
+	padding: 50px;
 }
 .gray {
 	color: #AAA;
@@ -259,17 +270,20 @@ function chart( _data ) {
 				.attr( "cx", function(d){ return x(dateFn(d)) })
 				.attr( "cy", function(d){ return y(freqFn(d)) })
 				.style("fill", function(d) { return color( cValue(d) ) }) 
+			/*
 			.append( "text" )
 				.attr( "transform", function(d){ return translate(d) })
 				.text( function(d){ return nisbaFn(d) })
-				
+			*/
+	
+	// Draw the legend
 	var legend = svg.selectAll(".legend")
 		.data( color.domain() )
 		.enter().append("g")
 		.attr("class", "legend")
 		.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-	// draw legend colored rectangles
+	// Draw legend colored rectangles
 	legend.append("rect")
 		.attr("y", padding )
 		.attr("x", width+padding - 18)
@@ -287,9 +301,9 @@ function chart( _data ) {
 			
 	// loess curve helper functions
 	var lineFn = d3.svg.line()
-		.x( function(d){ return d[0] } )
-		.y( function(d){ return d[1] } )
-		.interpolate('basis')
+		.x( function(d){ return d['x'] } )
+		.y( function(d){ return d['y'] } )
+		.interpolate('linear')
 	
 	var loessFn = function() {
 		var loess = science.stats.loess();
@@ -300,13 +314,36 @@ function chart( _data ) {
 		return d3.zip(xValues, yValuesSmoothed);
 	}
 	
-	/*
-	// Render the loess curve
-	svg.append("path")
-		.datum( loessFn )
-		.attr('class','line')
-		.attr('d', lineFn )
-	*/
+	// Now transform the data into something that can be easily plotted as a line
+	// There's probably a simpler way of doing this with D3 but I don't know
+	// it right now.
+	var lines = {}
+	for ( var i=0; i<_data.length; i++ ) {
+		var c = color( cValue(_data[i]) );
+		if ( c in lines ) {
+			lines[ c ].push({ 
+				x: x( dateFn( _data[i] ) ), 
+				y: y( freqFn( _data[i] ) )
+			});
+		}
+		else {
+			lines[ c ] = [{ 
+				x: x( dateFn( _data[i] ) ), 
+				y: y( freqFn( _data[i] ) )
+			}];
+		}
+	}
+	var sort = new Sorted();
+	for ( var c in lines ) {
+		lines[c] = sort.numSort( lines[c], 'x' );
+	}
+	for ( var c in lines ) {
+		svg.append('path')
+			.attr('d', lineFn( lines[c] ) )
+			.attr('stroke', c )
+			.attr('stroke-width', 5 )
+			.attr('fill', 'none' )
+	}
 }
 </script>
 </body>

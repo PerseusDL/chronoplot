@@ -1,3 +1,7 @@
+# A collection of chart building applications
+
+Built with Javascript. Mostly d3 and jQuery.
+
 # Notes
 * Loess Curve
 	* http://www.originlab.com/index.aspx?go=Products/Origin/91/LowessLoess
