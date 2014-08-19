@@ -156,7 +156,9 @@ function selectorClick() {
 		else {
 			check = arrext.exile( check, [ val ] );
 		}
-		update();
+		if ( check.length > 0 ) {
+			update();
+		}
 	});
 	$('#clear').on( 'touchstart click', function( _e ) {
 		_e.preventDefault();
