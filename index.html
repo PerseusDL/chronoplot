@@ -17,6 +17,7 @@
 <script src="third_party/jslib/src/js/DateConvert.js"></script>
 <script src="third_party/jslib/src/js/ObjectExt.js"></script>
 <script src="third_party/jslib/src/js/Sorted.js"></script>
+<script src="data/TI_Onomastic_clean.js"></script>
 
 <script>
     var science = { stats: {} };
@@ -78,12 +79,15 @@ path.line {
 <script>
 
 // Gobal vars
-var raw = null;
+var raw = RAW;
 var arrext = new ArrayExt;
 var year_offset = 0;
 var check = [];
 var filter_check = [];
 
+buildSelector( raw, "nisba" );
+
+/*
 // Get the JSON
 $.ajax({
 //	url: 'data/TI_Onomastic_sample.json',
@@ -99,6 +103,7 @@ $.ajax({
 		console.log( _error );
 	}
 });
+*/
 
 function filterTextbox() {
 	$('#selectorFilter input').on( 'keyup', function( _e ) {
