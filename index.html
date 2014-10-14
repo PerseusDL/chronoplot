@@ -6,13 +6,18 @@
 <div id="selectorFilter">
 	<input type="text" placeholder="filter" />
 	<div id="selector"></div>
-	<a href="" id="clear">Clear All</a>
+	<div class="actions">
+		<a href="" id="clear">Clear All</a>
+	</div>
 	<br/>
-	<select name="linetype">
-		<option value="straight">straight</option>
-		<option value="smooth">smooth</option>
-		<option value="bar">bar</option>
-	</select>
+	<center>
+		<div class="linetype">linetype</div>
+		<select name="linetype">
+			<option value="straight">straight</option>
+			<option value="smooth">smooth</option>
+			<option value="step">step</option>
+		</select>
+	</center>
 </div>
 
 <!--- Javascript and CSS -->
@@ -37,6 +42,16 @@ h1 {
 	margin-bottom:0;
 	padding:0 0 0 20px;
 }
+.linetype {
+	padding:0 0 .5rem 0;
+	font-size: .8rem;
+	color:#AAA;
+}
+.actions a {
+	padding: 20px;
+	display: block;
+	text-align:center;
+}
 #selectorFilter {
 	right:0;
 	top:0;
@@ -57,11 +72,6 @@ h1 {
 }
 #selector div {
 	margin: 15px 0;
-}
-#clear {
-	display: block;
-	text-align:center;
-	padding: 50px;
 }
 .gray {
 	color: #AAA;
@@ -158,24 +168,32 @@ function mark() {
 
 function selectorClick() {
 	$('#selector input:checkbox').change( function() {
-		var val = $(this).attr('value');
-		if ( $(this).prop('checked') ) {
-			if ( $.inArray( val, check ) == -1 ) {
-				check.push( val );
-			}
-		}
-		else {
-			check = arrext.exile( check, [ val ] );
-		}
-		if ( check.length > 0 ) {
-			update();
-		}
+		plot( this );
 	});
-	$('#clear').on( 'touchstart click', function( _e ) {
-		_e.preventDefault();
+	$("select[name='linetype']").change( function( e ) {
+		e.preventDefault();
+		plot( this );
+	})
+	$('#clear').on( 'touchstart click', function( e ) {
+		e.preventDefault();
 		$('#selector input:checkbox').attr("checked",false);
 		check = [];
 	})
+}
+
+function plot( elem ) {
+	var val = $(elem).attr('value');
+	if ( $(elem).prop('checked') ) {
+		if ( $.inArray( val, check ) == -1 ) {
+			check.push( val );
+		}
+	}
+	else {
+		check = arrext.exile( check, [ val ] );
+	}
+	if ( check.length > 0 ) {
+		update();
+	}
 }
 
 // Unique Words
@@ -314,7 +332,7 @@ function chart( _data ) {
 
 	var linetype = function() {
 		switch( $("select[name='linetype']").val() ) {
-			case 'bar':
+			case 'step':
 				return 'step-after';
 			case 'smooth':
 				return 'basis';
