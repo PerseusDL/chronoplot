@@ -7,6 +7,12 @@
 	<input type="text" placeholder="filter" />
 	<div id="selector"></div>
 	<a href="" id="clear">Clear All</a>
+	<br/>
+	<select name="linetype">
+		<option value="straight">straight</option>
+		<option value="smooth">smooth</option>
+		<option value="bar">bar</option>
+	</select>
 </div>
 
 <!--- Javascript and CSS -->
@@ -305,12 +311,23 @@ function chart( _data ) {
 		.attr("dy", ".35em")
 		.style("text-anchor", "end")
 		.text(function(d) { return d });
-			
+
+	var linetype = function() {
+		switch( $("select[name='linetype']").val() ) {
+			case 'bar':
+				return 'step-after';
+			case 'smooth':
+				return 'basis';
+			case 'straight':
+				return 'linear';
+		}
+	}
+	
 	// loess curve helper functions
 	var lineFn = d3.svg.line()
 		.x( function(d){ return d['x'] } )
 		.y( function(d){ return d['y'] } )
-		.interpolate('linear')
+		.interpolate( linetype() )
 	
 	var loessFn = function() {
 		var loess = science.stats.loess();
