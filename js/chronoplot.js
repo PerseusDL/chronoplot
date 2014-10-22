@@ -85,7 +85,7 @@ function plot( elem ) {
 function uniqWords( _data, _key ) {
 	var filter = {};
 	for ( var i=0, ii=_data.length; i<ii; i++ ) {
-		var key = _data[i]["nisba"];
+		var key = _data[i][config.selector];
 		var phon = _data[i]["phonetic"];
 		if ( key != null ) {
 			filter[ key ] = phon;
@@ -98,7 +98,7 @@ function uniqWords( _data, _key ) {
 function filter( _data ) {
 	var match = [];
 	for ( var i=0,ii=_data.length; i<ii; i++ ) {
-		if ( $.inArray( _data[i]["nisba"], check ) != -1 ) {
+		if ( $.inArray( _data[i][config.selector], check ) != -1 ) {
 			match.push( _data[i] );
 		}
 	}
@@ -118,8 +118,8 @@ function chart( _data ) {
 	
 	var freqFn = function(d){ return d.freq }
 	var dateFn = function(d){ return d.dateAH }
-	var nisbaFn = function(d){ return d.nisba }
-	var cValue = function(d) { return d.nisba }
+	var nisbaFn = function(d){ return d[config.selector] }
+	var cValue = function(d) { return d[config.selector] }
 	var color = d3.scale.category10();
 
 	
@@ -148,7 +148,9 @@ function chart( _data ) {
 	var yMap = function(d){ return y( freqFn(d) ) }
 	
 	// Translate
-	var translate = function(d){ return "translate("+x(freqFn(d))+","+y(freqFn(d))+")" }
+	var translate = function(d){ 
+		return "translate("+x(freqFn(d))+","+y(freqFn(d))+")" 
+	}
 
 	// Build the axes
 	// xAxis
@@ -192,7 +194,9 @@ function chart( _data ) {
 		.data( color.domain() )
 		.enter().append("g")
 		.attr("class", "legend")
-		.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+		.attr("transform", function(d, i) { 
+			return "translate(0," + i * 20 + ")"; 
+		});
 
 	// Draw legend colored rectangles
 	legend.append("rect")
