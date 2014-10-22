@@ -6,7 +6,11 @@ var check = [];
 var filter_check = [];
 
 buildSelector( raw, config.selector );
+set_title( config );
 
+function set_title( config ) {
+	$('h1').text( config.title );
+}
 function filterTextbox() {
 	$('#selectorFilter input').on( 'keyup', function( _e ) {
 		$('#selector .item').hide();
