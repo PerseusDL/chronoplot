@@ -28,8 +28,12 @@ function filterTextbox() {
 }
 
 function update() {
+	clear();
 	chart( filter(raw) );
-	$.scrollToBottom(.5);
+}
+
+function clear() {
+	$('svg').remove();
 }
 
 function buildSelector( _data, _key ) {
