@@ -29,7 +29,7 @@ function filterTextbox() {
 
 function update() {
 	clear();
-	chart( filter(raw) );
+	graph( filter(raw) );
 }
 
 function clear() {
@@ -114,10 +114,10 @@ function filter( _data ) {
 }
 
 // Build the D3 chart
-function chart( _data ) {
-	var width = 800;
-	var height = 600;
-	var padding = 50;
+function graph( _data ) {
+	var width = config.graph.width;
+	var height = config.graph.height;
+	var padding = config.graph.padding;
 	
 	// Build the drawing area
 	var svg = d3.select( "body" ).append( "svg:svg" )
