@@ -5,7 +5,7 @@ var year_offset = 0;
 var check = [];
 var filter_check = [];
 
-buildSelector( raw, "nisba" );
+buildSelector( raw, config.selector );
 
 function filterTextbox() {
 	$('#selectorFilter input').on( 'keyup', function( _e ) {
