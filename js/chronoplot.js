@@ -276,7 +276,7 @@ function graph( _data ) {
 	// Now transform the data into something that can be easily plotted as a line
 	// There's probably a simpler way of doing this with D3 but I don't know
 	// it right now.
-	var lines = {}
+	var lines = {};
 	for ( var i=0; i<_data.length; i++ ) {
 		var c = color( cValue(_data[i]) );
 		if ( c in lines ) {
@@ -296,11 +296,15 @@ function graph( _data ) {
 	for ( var c in lines ) {
 		lines[c] = sort.numSort( lines[c], 'x' );
 	}
+	var i=0;
 	for ( var c in lines ) {
+		var lindex =  i % config.line_styles.length;
 		svg.append('path')
+			.style("stroke-dasharray", (config.line_styles[ lindex ]) )
 			.attr('d', lineFn( lines[c] ) )
 			.attr('stroke', c )
 			.attr('stroke-width', 5 )
-			.attr('fill', 'none' )
+			.attr('fill', 'none' );
+		i++;
 	}
 }
