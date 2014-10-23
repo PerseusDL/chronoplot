@@ -4,13 +4,16 @@ var arrext = new ArrayExt;
 var year_offset = 0;
 var check = [];
 var filter_check = [];
-
+var time = null;
 buildSelector( raw, config.selector );
 set_title( config );
 
+// Set the title of the graph in quesiton
 function set_title( config ) {
 	$('h1').text( config.title );
 }
+
+// Filtering
 function filterTextbox() {
 	$('#selectorFilter input').on( 'keyup', function( _e ) {
 		$('#selector .item').hide();
@@ -27,15 +30,32 @@ function filterTextbox() {
 	})
 }
 
+// When config.graph.width is set to "window"
+// Resize graph a reasonable time after 
+// window resize event stops
+function resized(){
+	update();
+}
+var timeout;
+if ( config.graph.width == "window" ) {
+	window.onresize = function(){
+	  clearTimeout( timeout );
+	  timeout = setTimeout( resized, 500 );
+	};
+}
+
+// Redraw current graph
 function update() {
 	clear();
 	graph( filter(raw) );
 }
 
+// Clear graph
 function clear() {
 	$('svg').remove();
 }
 
+// Build the selector
 function buildSelector( _data, _key ) {
 	var words = uniqWords( _data, _key );
 	for ( var arab in words ) {
@@ -53,10 +73,6 @@ function buildSelector( _data, _key ) {
 	}
 	selectorClick();
 	filterTextbox();
-}
-
-function mark() {
-	$('body').append( "<h1>"+check.join(' ' )+"</h1>" );
 }
 
 function selectorClick() {
@@ -113,16 +129,32 @@ function filter( _data ) {
 	return match;
 }
 
+// Calculate graph width
+function graph_width() {
+	if ( config.graph.width == "window" ) {
+		return $(window).width() - $('#selectorFilter').width() - config.graph.padding*2;
+	}
+	return config.graph.width;
+}
+
+// Calculate graph height
+function graph_height() {
+	if ( config.graph.height == "window" ) {
+		return parseInt( graph_width() * .75 );
+	}
+	return config.graph.height;
+}
+
 // Build the D3 chart
 function graph( _data ) {
-	var width = config.graph.width;
-	var height = config.graph.height;
+	var width = graph_width();
+	var height = graph_height();
 	var padding = config.graph.padding;
 	
 	// Build the drawing area
 	var svg = d3.select( "body" ).append( "svg:svg" )
 		.attr( "width", width+padding )
-		.attr( "height", height+padding )
+		.attr( "height", width+padding )
 	
 	var freqFn = function(d){ return d.freq }
 	var dateFn = function(d){ return d.dateAH }

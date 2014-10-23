@@ -3,8 +3,8 @@ var config = {
 	"date": "hijri", // hijri or western
 	"title": "Chronological Coverage of Arabic Sources",
 	"graph": {
-		"width": 800,
-		"height": 600,
+		"width": "window",
+		"height": "window",
 		"padding": 50
 	}
 	
