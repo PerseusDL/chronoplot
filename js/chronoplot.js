@@ -254,6 +254,7 @@ function graph( _data ) {
 		.style("text-anchor", "end")
 		.text(function(d) { return d });
 
+	// get the linetype
 	var linetype = function() {
 		return $("select[name='linetype']").val();
 	}
