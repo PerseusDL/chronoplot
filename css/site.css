@@ -2,6 +2,8 @@ body { margin:0; }
 h1 {
 	margin-bottom:0;
 	padding:0 0 0 20px;
+	font-family: "Roboto";
+	font-weight: normal;
 }
 .linetype {
 	padding:0 0 .5rem 0;
@@ -28,7 +30,7 @@ h1 {
 }
 #selector {
 	/* font-size: 18px; */
-	height: 500px;
+	height: 450px;
 	overflow-y:scroll;
 }
 #selector div {
