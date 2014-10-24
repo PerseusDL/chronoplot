@@ -140,7 +140,7 @@ function graph_width() {
 // Calculate graph height
 function graph_height() {
 	if ( config.graph.height == "window" ) {
-		return parseInt( graph_width() * .75 );
+		return parseInt( graph_width() * .6 );
 	}
 	return config.graph.height;
 }
@@ -203,7 +203,7 @@ function graph( _data ) {
 		.attr("x", width-padding)
 		.attr("y", padding*.75)
 		.style("text-anchor", "end")
-		.text("DateAH");
+		.text("Date (AH)");
 		
 	// yAxis
 	svg.append("g")
@@ -213,7 +213,7 @@ function graph( _data ) {
 	.append("text")
 		.attr("class", "label")
 		.attr("transform", "rotate(-90)")
-		.attr("y", padding*-.75 )
+		.attr("y", padding*-.9 )
 		.attr("x", padding*-1 )
 		.attr("dy", ".71em")
 		.style("text-anchor", "end")
@@ -224,7 +224,7 @@ function graph( _data ) {
 		.data( _data )
 		.enter()
 			.append( "svg:circle" )
-				.attr( "r", 5 )
+				.attr( "r", config.line_thickness )
 				.attr( "cx", function(d){ return x(dateFn(d)) })
 				.attr( "cy", function(d){ return y(freqFn(d)) })
 				.style("fill", function(d) { return color( cValue(d) ) })
@@ -246,20 +246,21 @@ function graph( _data ) {
 		.attr("height", 18)
 		.style("fill", color);
 	
-	// draw legend text
+	// Draw legend text
 	legend.append("text")
 		.attr("x", width+padding - 24)
 		.attr("y", 9+padding )
 		.attr("dy", ".35em")
+		.attr("class","legendItem")
 		.style("text-anchor", "end")
 		.text(function(d) { return d });
 
-	// get the linetype
+	// Get the linetype
 	var linetype = function() {
 		return $("select[name='linetype']").val();
 	}
 	
-	// loess curve helper functions
+	// Loess curve helper functions
 	var lineFn = d3.svg.line()
 		.x( function(d){ return d['x'] } )
 		.y( function(d){ return d['y'] } )
@@ -304,7 +305,7 @@ function graph( _data ) {
 			.style("stroke-dasharray", (config.line_styles[ lindex ]) )
 			.attr('d', lineFn( lines[c] ) )
 			.attr('stroke', c )
-			.attr('stroke-width', 5 )
+			.attr('stroke-width', config.line_thickness )
 			.attr('fill', 'none' );
 		i++;
 	}

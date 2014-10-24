@@ -2,18 +2,20 @@ body { margin:0; }
 h1 {
 	margin-bottom:0;
 	padding:0 0 0 20px;
-	font-family: "Roboto";
+	font-family: 'HiLoDecoDeco';
 	font-weight: normal;
 }
 .linetype {
 	padding:0 0 .5rem 0;
 	font-size: .8rem;
+	font-family: 'HiLoDecoDeco';
 	color:#AAA;
 }
 .actions a {
-	padding: 20px;
+	padding: 10px;
 	display: block;
 	text-align:center;
+	font-family: 'HiLoDecoDeco';
 }
 #selectorFilter {
 	right:0;
@@ -22,7 +24,7 @@ h1 {
 	background-color:#EEE;
 	padding:10px;
 	height:100%;
-	width:215px;
+	width:300px;
 }
 #selectorFilter input {
 	padding: 5px;
@@ -37,18 +39,36 @@ h1 {
 	margin: 15px 0;
 }
 .gray {
+	font-size: 14px;
 	color: #AAA;
+	font-family: 'DroidArabicNaskhBold';
 }
+
+.item {
+	font-size: 16px;
+	color: #000;
+	font-family: 'DroidArabicNaskhBold';
+}
+
+.legendItem {
+	font-size: 20px;
+	color: #000;
+	font-family: 'DroidArabicNaskhBold';
+}
+
 .axis path,
 .axis line {
 	fill:none;
 	stroke:black;
 	shape-rendering:crispEdges;
 }
+
 .axis text {
-	font-family:sans-serif;
-	font-size:11px;
+	font-size:14px;
+	font-family: 'HiLoDecoDeco';
 }
+
+
 path.line {
 	fill: none;
 	stroke:#FF0000;
