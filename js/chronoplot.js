@@ -252,7 +252,7 @@ function graph( _data ) {
 		.attr("y", 9+padding )
 		.attr("dy", ".35em")
 		.attr("class","legendItem")
-		.style("text-anchor", "end")
+		.style("text-anchor", "start")
 		.text(function(d) { return d });
 
 	// Get the linetype
