@@ -235,20 +235,20 @@ function graph( _data ) {
 		.enter().append("g")
 		.attr("class", "legend")
 		.attr("transform", function(d, i) { 
-			return "translate(0," + i * 20 + ")"; 
+			return "translate(0," + i * 30 + ")"; // spacing between legend items
 		});
 
 	// Draw legend colored rectangles
 	legend.append("rect")
 		.attr("y", padding )
-		.attr("x", width+padding - 18)
+		.attr("x", width - 18)
 		.attr("width", 18)
 		.attr("height", 18)
 		.style("fill", color);
 	
 	// Draw legend text
 	legend.append("text")
-		.attr("x", width+padding - 24)
+		.attr("x", width - 24)
 		.attr("y", 9+padding )
 		.attr("dy", ".35em")
 		.attr("class","legendItem")
