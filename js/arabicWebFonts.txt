@@ -1,0 +1,34 @@
+ARABIC
+<link media="screen" href="http://openfontlibrary.org/face/xb-yagut" rel="stylesheet" type="text/css">
+font-family: 'XBYagutRegular'; 
+
+<link media="screen" href="http://openfontlibrary.org/face/xb-tabriz" rel="stylesheet" type="text/css">
+font-family: 'XBTabrizRegular';
+
+<link media="screen" href="http://openfontlibrary.org/face/xb-shiraz" rel="stylesheet" type="text/css">
+font-family: 'XBShirazRegular';
+
+<link media="screen" href="http://openfontlibrary.org/face/amiri" rel="stylesheet" type="text/css">
+font-family: 'AmiriQuranRegular';
+
+<link href="http://openfontlibrary.org/face/lateef" rel="stylesheet" type="text/css">
+font-family: 'LateefRegular';
+
+<link href="http://openfontlibrary.org/face/droid-arabic-naskh" rel="stylesheet" type="text/css">
+font-family: 'DroidArabicNaskhBold';
+
+
+NOT ARABIC
+<link href="http://openfontlibrary.org/face/a-bebedera" rel="stylesheet" type="text/css">
+font-family: 'ABebederaHeavy';
+
+<link href="http://openfontlibrary.org/face/hilo-deco" rel="stylesheet" type="text/css">
+font-family: 'HiLoDecoDeco';
+
+
+
+
+
+
+
+

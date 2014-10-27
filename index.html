@@ -4,24 +4,55 @@
 <head>
 	<title>Chronoplot</title>
 	<link rel="stylesheet" href="css/site.css" />
+	
+	<link href="http://openfontlibrary.org/face/droid-arabic-naskh" rel="stylesheet" type="text/css">
+	<link href="http://openfontlibrary.org/face/hilo-deco" rel="stylesheet" type="text/css">
+	<!--
+	<link href="http://openfontlibrary.org/face/xb-yagut" rel="stylesheet" type="text/css">
+	<link href="http://openfontlibrary.org/face/droid-arabic-naskh" rel="stylesheet" type="text/css">
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Lateef:400,300' rel='stylesheet' type='text/css'>
+	<link href="http://openfontlibrary.org/face/xb-tabriz" rel="stylesheet" type="text/css">
+	<link href="http://openfontlibrary.org/face/xb-shiraz" rel="stylesheet" type="text/css">
+	<link href="http://openfontlibrary.org/face/amiri" rel="stylesheet" type="text/css">
+	-->
 </head>
 <body>
 <h1></h1>
 <div id="selectorFilter">
-	<input type="text" placeholder="filter" />
+	<input type="text" placeholder="type the title of the book..." />
 	<div id="selector"></div>
 	<div class="actions">
-		<a href="" id="clear">Clear All</a>
+		<a href="" id="clear">clear all</a>
 	</div>
 	<br/>
 	<center>
 		<div class="linetype">linetype</div>
 		<select name="linetype">
-			<option value="step-after">step-after</option>
+			<option value="step-before">step-before</option>
 			<option value="linear">linear</option>
 			<option value="basis">basis</option>
+			<option value="bundle">bundle</option>
+			<option value="cardinal">cardinal</option>
+			<option value="monotone">monotone</option>
 		</select>
 	</center>
+<!--
+D3 Linetypes
+* linear – Normal line (jagged).
+* step-before – a stepping graph alternating between vertical and horizontal segments.
+* step-after - a stepping graph alternating between horizontal and vertical segments.
+* basis - a B-spline, with control point duplication on the ends (that's the one above).
+* basis-open - an open B-spline; may not intersect the start or end.
+* basis-closed - a closed B-spline, with the start and the end closed in a loop.
+* bundle - equivalent to basis, except a separate tension parameter is used to straighten
+  the spline. This could be really cool with varying tension.
+* cardinal - a Cardinal spline, with control point duplication on the ends. It looks slightly more 'jagged' than basis.
+* cardinal-open - an open Cardinal spline; may not intersect the start or end, but will
+  intersect other control points. So kind of shorter than 'cardinal'.
+* cardinal-closed - a closed Cardinal spline, looped back on itself.
+* monotone - cubic interpolation that makes the graph only slightly smoother.
+-->
 </div>
 
 <!--- Javascript and CSS -->
