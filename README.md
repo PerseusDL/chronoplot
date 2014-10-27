@@ -1,9 +1,9 @@
 # D3 line chart with simple dataset search
 
-## Config
+## config
 	js/config.js
 
-## Change dataset
+## change dataset
 To change the current dataset save the desired dataset as...
 
 	data/data.js
