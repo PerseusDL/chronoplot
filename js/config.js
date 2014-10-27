@@ -1,5 +1,5 @@
 var config = {
-	"selector": "nisba",
+	"selector": "book",
 	"date": "hijri", // hijri or western
 	"title": "Chronological Coverage of Arabic Sources",
 	"graph": {
