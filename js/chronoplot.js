@@ -59,7 +59,6 @@ function clear() {
 function buildSelector( _data, _key ) {
 	var words = uniqWords( _data, _key );
 	for ( var arab in words ) {
-		
 		// Build the selector item
 		var extra = '';
 		if ( words[arab] != null ) {
@@ -67,7 +66,6 @@ function buildSelector( _data, _key ) {
 		}
 		var item = '<div class="item"><input type="checkbox" value="'+arab+'">'+arab+extra+"</div>";
 		$('#selector').append( item );
-		
 		// Build the filter check
 		filter_check.push( arab+":"+words[arab] );
 	}
@@ -155,7 +153,7 @@ function graph( _data ) {
 	var svg = d3.select( "body" ).append( "svg:svg" )
 		.attr( "width", width+padding )
 		.attr( "height", width+padding )
-
+		
 	var freqFn = function(d){ return d['timeseries'][1] }
 	var dateFn = function(d){ return d['timeseries'][0] }
 	var freqMax = function(d){ return scaleMax(d,1) }
@@ -179,8 +177,6 @@ function graph( _data ) {
 		.orient( "bottom" )
 		.ticks( 20 )
 	
-	//var xMap = function(d){ return x( dateFn(d)-year_offset ) }
-	
 	// Y variable
 	var yscale = d3.scale.linear()
 		.range([ height-padding, padding ])
@@ -190,8 +186,6 @@ function graph( _data ) {
 		.scale( yscale )
 		.orient( "left" )
 		.ticks( 5 )
-	
-	//var yMap = function(d){ return y( freqFn(d) ) }
 	
 	// Translate
 	var translate = function(d){ 
@@ -226,37 +220,39 @@ function graph( _data ) {
 		.text("Frequency");
 	
 	// Plot the points
-	/*
-	svg.selectAll( "circle" )
-		.data( _data )
-		.enter()
-			.append( "svg:circle" )
-				.attr( "r", config.line_thickness )
-				.attr( "cx", function(d){ return x(d[0]) })
-				.attr( "cy", function(d){ return y(d[1]) })
-				.style("fill", function(d) { return color( cValue(d) ) })
-	*/
+	for ( var id in _data ) {
+		var c = color( cValue( _data[id] ) );
+		var t = _data[id]['timeseries'];
+		for ( var i=0; i<t.length; i++ ) {
+			var d = t[i];
+			svg.append( "svg:circle" )
+				.attr( "r", config.line_thickness*1.1 )
+				.attr( "cx", xscale(d[0]) )
+				.attr( "cy", yscale(d[1]) )
+				.style("fill", c )
+		}
+	}
 	
 	// Draw the legend
 	var legend = svg.selectAll(".legend")
 		.data( color.domain() )
 		.enter().append("g")
 		.attr("class", "legend")
-		.attr("transform", function(d, i) { 
-			return "translate(0," + i * 30 + ")"; // spacing between legend items
+		.attr("transform", function(d,i) { 
+			return "translate(0,"+i*30+")"; // spacing between legend items
 		});
 
 	// Draw legend colored rectangles
 	legend.append("rect")
 		.attr("y", padding )
-		.attr("x", width - 18)
+		.attr("x", width-18)
 		.attr("width", 18)
 		.attr("height", 18)
 		.style("fill", color);
 	
 	// Draw legend text
 	legend.append("text")
-		.attr("x", width - 24)
+		.attr("x", width-24)
 		.attr("y", 9+padding )
 		.attr("dy", ".35em")
 		.attr("class","legendItem")
@@ -274,17 +270,6 @@ function graph( _data ) {
 		.y( function(d){ return d['y'] } )
 		.interpolate( linetype() )
 	
-	/*
-	var loessFn = function() {
-		var loess = science.stats.loess();
-		loess.bandwidth(0.25);
-		var xValues = _data.map( xMap );
-		var yValues = _data.map( yMap );
-		var yValuesSmoothed = loess(xValues, yValues);
-		return d3.zip(xValues, yValuesSmoothed);
-	}
-	*/
-	
 	// Now transform the data into something that can be easily plotted as a line
 	// There's probably a simpler way of doing this with D3 but I don't know
 	// it right now.
@@ -293,21 +278,15 @@ function graph( _data ) {
 		var c = color( cValue(_data[id]) );
 		t = _data[id]['timeseries'];
 		for ( var i=0; i<t.length; i++ ) {
-			if ( c in lines ) {
-				lines[ c ].push({ 
-					x: xscale( t[i][0] ), 
-					y: yscale( t[i][1] )
-				});
+			if (!( c in lines )) {
+				lines[ c ] = [];
 			}
-			else {
-				lines[ c ] = [{ 
-					x: xscale( t[i][0] ), 
-					y: yscale( t[i][1] )
-				}];
-			}
+			lines[ c ].push({ 
+				x: xscale( t[i][0] ), 
+				y: yscale( t[i][1] )
+			});
 		}
 	}
-	console.log( lines );
 	var sort = new Sorted();
 	for ( var c in lines ) {
 		lines[c] = sort.numSort( lines[c], 'x' );
