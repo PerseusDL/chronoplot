@@ -108,9 +108,9 @@ function plot( elem ) {
 // Unique Words
 function uniqWords( _data, _key ) {
 	var filter = {};
-	for ( var i=0, ii=_data.length; i<ii; i++ ) {
-		var key = _data[i][config.selector];
-		var phon = _data[i]["phonetic"];
+	for ( var id in _data ) {
+		var key = _data[id][config.selector];
+		var phon = _data[id]["phonetic"];
 		if ( key != null ) {
 			filter[ key ] = phon;
 		}
@@ -121,9 +121,9 @@ function uniqWords( _data, _key ) {
 // Filter items
 function filter( _data ) {
 	var match = [];
-	for ( var i=0,ii=_data.length; i<ii; i++ ) {
-		if ( $.inArray( _data[i][config.selector], check ) != -1 ) {
-			match.push( _data[i] );
+	for ( var id in _data ) {
+		if ( $.inArray( _data[id][config.selector], check ) != -1 ) {
+			match.push( _data[id] );
 		}
 	}
 	return match;
@@ -155,41 +155,47 @@ function graph( _data ) {
 	var svg = d3.select( "body" ).append( "svg:svg" )
 		.attr( "width", width+padding )
 		.attr( "height", width+padding )
-	
-	var freqFn = function(d){ return d.freq }
-	var dateFn = function(d){ return d.dateAH }
+
+	var freqFn = function(d){ return d['timeseries'][1] }
+	var dateFn = function(d){ return d['timeseries'][0] }
+	var freqMax = function(d){ return scaleMax(d,1) }
+	var dateMax = function(d){ return scaleMax(d,0) }
 	var nisbaFn = function(d){ return d[config.selector] }
 	var cValue = function(d) { return d[config.selector] }
 	var color = d3.scale.category10();
-
+	var scaleMax = function(d,i) {
+		return d3.max( d['timeseries'], function(d){
+			return d[i];
+		});
+	}
 	
 	// X variable
-	var x = d3.scale.linear()
+	var xscale = d3.scale.linear()
 		.range([ padding, width-padding ])
-		.domain( [0, d3.max(_data, dateFn)-1] )
+		.domain( [0, d3.max(_data, dateMax) ] )
 		
 	var xAxis = d3.svg.axis()
-		.scale( x )
+		.scale( xscale )
 		.orient( "bottom" )
 		.ticks( 20 )
 	
-	var xMap = function(d){ return x( dateFn(d)-year_offset ) }
+	//var xMap = function(d){ return x( dateFn(d)-year_offset ) }
 	
 	// Y variable
-	var y = d3.scale.linear()
+	var yscale = d3.scale.linear()
 		.range([ height-padding, padding ])
- 		.domain([ 0, d3.max( _data, freqFn ) ])
+ 		.domain([ 0, d3.max( _data, freqMax ) ])
 		
 	var yAxis = d3.svg.axis()
-		.scale( y )
+		.scale( yscale )
 		.orient( "left" )
 		.ticks( 5 )
 	
-	var yMap = function(d){ return y( freqFn(d) ) }
+	//var yMap = function(d){ return y( freqFn(d) ) }
 	
 	// Translate
 	var translate = function(d){ 
-		return "translate("+x(freqFn(d))+","+y(freqFn(d))+")" 
+		return "translate("+xscale(freqFn(d))+","+yscale(freqFn(d))+")" 
 	}
 
 	// Build the axes
@@ -220,14 +226,16 @@ function graph( _data ) {
 		.text("Frequency");
 	
 	// Plot the points
+	/*
 	svg.selectAll( "circle" )
 		.data( _data )
 		.enter()
 			.append( "svg:circle" )
 				.attr( "r", config.line_thickness )
-				.attr( "cx", function(d){ return x(dateFn(d)) })
-				.attr( "cy", function(d){ return y(freqFn(d)) })
+				.attr( "cx", function(d){ return x(d[0]) })
+				.attr( "cy", function(d){ return y(d[1]) })
 				.style("fill", function(d) { return color( cValue(d) ) })
+	*/
 	
 	// Draw the legend
 	var legend = svg.selectAll(".legend")
@@ -266,6 +274,7 @@ function graph( _data ) {
 		.y( function(d){ return d['y'] } )
 		.interpolate( linetype() )
 	
+	/*
 	var loessFn = function() {
 		var loess = science.stats.loess();
 		loess.bandwidth(0.25);
@@ -274,26 +283,31 @@ function graph( _data ) {
 		var yValuesSmoothed = loess(xValues, yValues);
 		return d3.zip(xValues, yValuesSmoothed);
 	}
+	*/
 	
 	// Now transform the data into something that can be easily plotted as a line
 	// There's probably a simpler way of doing this with D3 but I don't know
 	// it right now.
 	var lines = {};
-	for ( var i=0; i<_data.length; i++ ) {
-		var c = color( cValue(_data[i]) );
-		if ( c in lines ) {
-			lines[ c ].push({ 
-				x: x( dateFn( _data[i] ) ), 
-				y: y( freqFn( _data[i] ) )
-			});
-		}
-		else {
-			lines[ c ] = [{ 
-				x: x( dateFn( _data[i] ) ), 
-				y: y( freqFn( _data[i] ) )
-			}];
+	for ( var id in _data ) {
+		var c = color( cValue(_data[id]) );
+		t = _data[id]['timeseries'];
+		for ( var i=0; i<t.length; i++ ) {
+			if ( c in lines ) {
+				lines[ c ].push({ 
+					x: xscale( t[i][0] ), 
+					y: yscale( t[i][1] )
+				});
+			}
+			else {
+				lines[ c ] = [{ 
+					x: xscale( t[i][0] ), 
+					y: yscale( t[i][1] )
+				}];
+			}
 		}
 	}
+	console.log( lines );
 	var sort = new Sorted();
 	for ( var c in lines ) {
 		lines[c] = sort.numSort( lines[c], 'x' );
