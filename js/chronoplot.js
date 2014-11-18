@@ -157,25 +157,44 @@ function graph( _data ) {
 	var freqFn = function(d){ return d['timeseries'][1] }
 	var dateFn = function(d){ return d['timeseries'][0] }
 	var freqMax = function(d){ return scaleMax(d,1) }
-	var dateMax = function(d){ return scaleMax(d,0) }
 	var nisbaFn = function(d){ return d[config.selector] }
 	var cValue = function(d) { return d[config.selector] }
 	var color = d3.scale.category10();
+	
+	// axes scale
+	var dateMax = function(d){ return scaleMax(d,0) }
+	var dateMin = function(d){ return scaleMin(d,0) }
 	var scaleMax = function(d,i) {
 		return d3.max( d['timeseries'], function(d){
 			return d[i];
 		});
 	}
+	var scaleMin = function(d,i){
+		return d3.min( d['timeseries'], function(d){
+			return d[i];
+		});
+	}
+	
+	var xticks = function() {
+		var interval = 50;
+		var scale = xscale.domain();
+		var diff = scale[1]-scale[0];
+		var more = diff / interval;
+		for ( var i=0; i<more; i++ ) {
+			scale.splice( 1, 0, scale[0]+interval*i );
+		}
+		return scale;
+	}
 	
 	// X variable
 	var xscale = d3.scale.linear()
 		.range([ padding, width-padding ])
-		.domain( [0, d3.max(_data, dateMax) ] )
+		.domain( [d3.min(_data, dateMin), d3.max(_data, dateMax) ] )
 		
 	var xAxis = d3.svg.axis()
 		.scale( xscale )
 		.orient( "bottom" )
-		.ticks( 20 )
+		.tickValues( xticks )
 	
 	// Y variable
 	var yscale = d3.scale.linear()
